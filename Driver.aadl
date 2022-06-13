@@ -1,0 +1,86 @@
+package Driver
+public
+	with BasicCustomTypes;
+	with UserInterface;
+	with Sensors;
+	with Devices;
+	with Hardware;
+	 
+	process Driver
+		features
+			
+			--sensors inputs
+			temperature1 : in data port Sensors::Temperature;
+			temperature2 : in data port Sensors::Temperature;
+			humidity : in data port Sensors::Humidity;
+			
+			--user interface
+			keyboardSignal : in data port UserInterface::Key;
+			newFrame : out data port UserInterface::DisplayFrame;
+			
+			--devices
+			heater : out data port BasicCustomTypes::OnOff;
+			fan : out data port BasicCustomTypes::OnOff;
+			rotationEngine : out data port BasicCustomTypes::OnOff;
+			evaporator : out data port BasicCustomTypes::OnOff;
+			
+
+	end Driver;
+	
+	
+	
+	thread DriverMainThread
+		features
+			humidityLevelToLow : in event port; --upper
+			temperatureDifferenceToHigh : in event port; --bottom
+			getUserInput : in data port BasicCustomTypes::RawData;
+			startStopFan: out data port BasicCustomTypes::OnOff;
+			startStopEngine: out data port BasicCustomTypes::OnOff;
+			startStopEvaporator: out data port BasicCustomTypes::OnOff;
+			startStopHeater: out data port BasicCustomTypes::OnOff;
+			refreshDisplay: out data port UserInterface::DisplayFrame;
+	
+		  properties
+		    Dispatch_Protocol => Periodic;
+		    Dispatch_Offset => 	2ms;
+		    Deadline => 5ms;	
+		    Period => 15ms;
+		    Compute_Execution_Time => 0ms..5ms;	
+	end driverMainThread;
+   	
+ process implementation Driver.impl
+ 	subcomponents
+ 		
+ 			-- threads
+ 
+ 			temperatureProccesor : thread Sensors::TemperatureProcess;
+ 			humidiytProccesor : thread Sensors::HumidityProcess;
+ 			keyboardInput : thread  UserInterface::KeyboardInputProccesor;
+ 			main : thread DriverMainThread;
+	
+   		connections
+   		    c_temperature1 : port temperature1 -> temperatureProccesor.temperature1;
+   		    c_temperature2 : port temperature2 -> temperatureProccesor.temperature2;
+   		    c_humidity : port humidity -> humidiytProccesor.humidity;
+   		    c_keyboard : port keyboardSignal -> keyboardInput.pessKey;
+   		    
+   		    --main thread 
+   		    
+   		    
+   		    c_main_display : port main.refreshDisplay -> newFrame;
+   		    c_temperature_main : port temperatureProccesor.temperatureDifferenceToHigh -> main.temperatureDifferenceToHigh;
+   		    c_humidity_main : port humidiytProccesor.humidityLevelToLow -> main.humidityLevelToLow;
+   		    
+   		    c_main_fan : port main.startStopFan -> fan;
+   		    c_main_engine : port main.startStopEngine -> rotationEngine;
+   		    c_main_evaporator : port main.startStopEvaporator -> evaporator;
+   		    c_main_heater : port main.startStopHeater -> heater;
+   		    c_keyboard_main : port  keyboardInput.sendData -> main.getUserInput;
+   		    
+   		    --c_rotation : port rotationEngineThread.stopStartThread -> startStopEngine;
+   		    
+   		    
+   		    
+   	end Driver.impl;
+   	 
+end Driver;

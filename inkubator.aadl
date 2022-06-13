@@ -1,0 +1,109 @@
+package inkubator
+public
+	
+	with Driver;
+	with Sensors;
+	with Devices;
+	with UserInterface;
+	with Hardware;
+
+   	
+   	system sys
+   	end sys;
+   
+   
+    system implementation sys.impl
+    	subcomponents		
+   			driver : process Driver::Driver.impl;
+   			--sensors
+   			temperatureSensor1 : device Sensors::TemperatureSensor;
+   			temperatureSensor2 : device Sensors::TemperatureSensor;
+   			humiditySensor : device Sensors::HumiditySensor;
+   			--devices
+   			fan  : device Devices::Fan;
+   			heater : device Devices::Heater;
+   			rotationEngine : device Devices::RotationEngine;
+   			evaporator : device Devices::Evaporator;
+   			--userInterface
+   			keyboard : device UserInterface::Keyboard;
+   			display : device UserInterface::Display;
+    		
+    		--hardware
+    		hMicroController : processor Hardware::MicroController;
+    		-- bus
+    		bTemp1MC : bus Hardware::Wire2mm;
+    		bTemp2MC : bus Hardware::Wire2mm;
+    		bHumidityMC : bus Hardware::Wire2mm;
+    		bFan : bus Hardware::Wire2mm;
+    		bHeater : bus Hardware::Wire2mm;
+    		bRotationEngine : bus Hardware::Wire2mm;
+    		bEvaporator : bus Hardware::Wire2mm;
+    		bUSB : bus Hardware::USB;
+    		bVGA : bus Hardware::VGA;
+    		
+    	connections
+    		--sensors
+    		c_temp1 : port temperatureSensor1.temperature -> driver.temperature1;
+    		c_temp2 : port temperatureSensor2.temperature -> driver.temperature2;
+    		c_humidity: port humiditySensor.humidity -> driver.humidity;
+    		
+    		--devices
+    		c_fan : port driver.fan -> fan.state;
+    		c_heater : port driver.heater -> heater.state;
+    		c_rotationEngine : port driver.rotationEngine -> rotationEngine.state;
+    		c_evaporator : port driver.evaporator -> evaporator.state;
+    		--userInterface
+    		c_keyboard : port keyboard.pressedKey -> driver.keyboardSignal;
+    		c_display : port driver.newFrame -> display.actualFrame;
+    		
+    		-- bus connections
+    		c_T1MC : bus access bTemp1MC->temperatureSensor1.pin;
+    		c_MCT1 : bus access bTemp1MC->hMicroController.pin1;
+    		
+    		c_T2MC : bus access bTemp2MC->temperatureSensor2.pin;
+    		c_MCT2 : bus access bTemp2MC->hMicroController.pin2;
+    		
+    		c_HuMC : bus access bHumidityMC->humiditySensor.pin;
+    		c_MCHu : bus access bHumidityMC->hMicroController.pin3;
+    		
+    		c_FMC : bus access bFan -> fan.pin;
+    		c_MCF : bus access bFan -> hMicroController.pin4;
+    		
+    		c_HeMC : bus access bHeater -> heater.pin;
+    		c_MCHe : bus access bHeater -> hMicroController.pin5;
+    		
+    		c_REMC : bus access bRotationEngine -> rotationEngine.pin;
+    		c_MCRE : bus access bRotationEngine -> hMicroController.pin6;
+    		
+    		c_EMC : bus access bEvaporator -> evaporator.pin;
+    		c_MCE : bus access bEvaporator -> hMicroController.pin7;
+    		
+    		c_KMC : bus access bUSB -> keyboard.usb;
+    		c_MCK : bus access bUSB -> hMicroController.usb1;
+    		
+    		c_DMC : bus access bVGA -> display.vga;
+    		c_MCD : bus access bVGA -> hMicroController.vga;
+    		
+    		
+		properties
+			  Actual_Connection_Binding => (reference(bTemp1MC)) applies to c_temp1;
+			  Actual_Connection_Binding => (reference(bTemp2MC))  applies to c_temp2;
+			  Actual_Connection_Binding => (reference(bHumidityMC))  applies to c_humidity;
+			  Actual_Connection_Binding => (reference(bHeater))  applies to c_fan;
+			  Actual_Connection_Binding => (reference(bTemp2MC))  applies to c_heater;
+			  Actual_Connection_Binding => (reference(bRotationEngine))  applies to c_rotationEngine;
+			  Actual_Connection_Binding => (reference(bEvaporator))  applies to c_evaporator;
+			  Actual_Connection_Binding => (reference(bUSB))  applies to c_keyboard;
+			  Actual_Connection_Binding => (reference(bVGA))  applies to c_display;
+			  
+			  
+			  Actual_Processor_Binding => (reference(hMicroController)) applies to driver;
+				 
+    		
+    		
+    end sys.impl;
+	
+	
+	
+	
+end inkubator;

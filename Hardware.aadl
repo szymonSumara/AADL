@@ -1,0 +1,51 @@
+package Hardware
+public
+	bus USB
+	end USB;
+	
+	bus VGA
+	end VGA;
+	
+	bus Wire2mm
+	end Wire2mm;
+	
+	bus SystemBus
+	end SystemBus;
+	
+	processor ElectronicCircut
+		features
+			pin : requires bus access Wire2mm;
+	end ElectronicCircut;
+	
+	processor MicroController 
+		features
+		    pin1: requires bus access Wire2mm;
+		   	pin2: requires bus access Wire2mm;
+		    pin3: requires bus access Wire2mm;
+		    pin4: requires bus access Wire2mm;
+		    pin5: requires bus access Wire2mm;
+		    pin6: requires bus access Wire2mm;
+		    pin7: requires bus access Wire2mm;
+		    vga:  requires bus access VGA;
+		    usb1: requires bus access USB;
+		    
+		    properties
+			 Scheduling_Protocol => (RMS);
+			 Priority_Range => 1 .. 20;
+			 Clock_Period => 1 ms;
+			 Transmission_Time => [Fixed => 0 ns .. 0 ns; PerByte => 1 us .. 1 us;]; 
+	end MicroController;
+	
+	processor Keyboard
+		features
+			usb: requires bus access USB;
+	end Keyboard;
+	
+	processor Display
+		features
+			vga: requires bus access VGA;
+	end Display;
+	
+	
+	
+end Hardware;

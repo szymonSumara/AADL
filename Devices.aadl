@@ -1,0 +1,40 @@
+package Devices
+public
+	with BasicCustomTypes;
+	with Hardware;
+	
+	
+	device Heater
+		features
+			state: in data port BasicCustomTypes::OnOff;
+			pin: requires bus access Hardware::Wire2mm;
+			
+	end Heater;
+	
+--   	device implementation Heater.impl
+--   	end Heater.impl;
+   	
+   	device Fan
+		features
+			state: in data port BasicCustomTypes::OnOff;
+			pin: requires bus access Hardware::Wire2mm;
+	end Fan;
+	
+--   	device implementation Fan.impl
+--   	end Fan.impl;
+   	
+   	device RotationEngine
+   		features
+			state: in data port BasicCustomTypes::OnOff;
+			pin: requires bus access Hardware::Wire2mm;
+   	end RotationEngine;
+   	
+   	device Evaporator
+   		features
+			state: in data port BasicCustomTypes::OnOff;
+			pin: requires bus access Hardware::Wire2mm;
+   	end Evaporator;
+
+   
+   	
+end Devices;

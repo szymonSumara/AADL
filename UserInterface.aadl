@@ -1,0 +1,49 @@
+package UserInterface
+public
+	
+	with BasicCustomTypes;
+	with Hardware;
+	
+	data DisplayFrame
+  	end DisplayFrame;
+	
+	data Key
+  	end Key;
+	
+	
+	device Display
+		features
+			actualFrame: in data port DisplayFrame;
+			vga: requires bus access Hardware::VGA;
+			
+	end Display;
+	
+--	device implementation Display.impl
+--	end Display.impl;
+	
+	
+	device Keyboard
+		features
+			pressedKey : out data port Key;
+			usb: requires bus access Hardware::USB;
+	end Keyboard;
+--	
+--	device implementation Keyboard.impl
+--	end Keyboard.impl;
+--	
+	thread KeyboardInputProccesor
+		features
+   			pessKey : in data port Key;
+   			sendData : out data port BasicCustomTypes::RawData;
+   		properties
+   			Dispatch_Protocol => Periodic;
+		    Dispatch_Offset => 	2ms;
+		    Deadline => 50ms;	
+		    Period => 100ms;
+		    Compute_Execution_Time => 5ms..10ms;	
+	end KeyboardInputProccesor;
+	
+	thread implementation KeyboardInputProccesor.impl
+	end KeyboardInputProccesor.impl;
+	
+end UserInterface;

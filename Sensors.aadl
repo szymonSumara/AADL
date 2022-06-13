@@ -1,0 +1,73 @@
+package Sensors
+public
+	with Data_Model;
+	with BasicCustomTypes;
+	with Hardware;
+	
+	
+	
+--  Temperature 
+
+	data Temperature
+     	properties
+       		Data_Model::Data_Representation => Integer;
+  	end Temperature;
+  
+	device TemperatureSensor
+		features
+			temperature: out data port Temperature;
+			pin: requires bus access Hardware::Wire2mm;
+
+	end TemperatureSensor;
+	
+	thread TemperatureProcess
+   		features
+   			temperature1 : in data port Temperature;
+   			temperature2 : in data port Temperature;
+   			temperatureDifferenceToHigh : out event port;
+   			
+   		properties
+   			Dispatch_Protocol => Periodic;
+		    Dispatch_Offset => 	2ms;
+		    Deadline => 30ms;	
+		    Period => 30ms;
+		    Compute_Execution_Time => 1ms..2ms;	
+   	end TemperatureProcess;
+   	
+   	thread implementation TemperatureProcess.impl
+   	end TemperatureProcess.impl;
+
+--  Humidity 
+
+	data Humidity
+     	properties
+       		Data_Model::Data_Representation => Integer;
+  	end Humidity;
+  	
+
+	device HumiditySensor
+		features
+			humidity: out data port Humidity;
+			pin: requires bus access Hardware::Wire2mm;
+	end HumiditySensor;
+	
+	device implementation HumiditySensor.impl
+	end HumiditySensor.impl;
+   	
+   	thread HumidityProcess
+   		features
+   			humidityLevelToLow : out event port;
+   			humidity : in data port Humidity;
+   		properties
+		    Dispatch_Protocol => Periodic;
+		    Dispatch_Offset => 	2ms;
+		    Deadline => 30ms;	
+		    Period => 30ms;
+		    Compute_Execution_Time => 1ms..2ms;	
+   	end HumidityProcess;
+   	
+   	thread implementation HumidityProcess.impl
+   	end HumidityProcess.impl;
+   	
+
+end Sensors;
